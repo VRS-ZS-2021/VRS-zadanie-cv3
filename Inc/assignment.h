@@ -46,5 +46,8 @@
 
 #define BUTTON_GET_STATE		GPIOA_IDR_REG & (1 << 3) 
 
+typedef enum EDGE_TYPE{NONE,RISE,FALL} EDGE_TYPE;
+
+EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples);
 
 #endif /* ASSIGNMENT_H_ */
