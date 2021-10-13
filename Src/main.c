@@ -107,14 +107,24 @@ int main(void)
   GPIOA_PUPDR_REG &= ~(uint32_t)(0x3 << 6);
   GPIOA_PUPDR_REG |= (uint32_t)(1 << 6);
 
+  int8_t actual_state = BUTTON_GET_STATE;
+  int8_t samples = 5;
+  int8_t LED_state = 0;
+  LED_OFF;
   while (1)
     {
-  	 if(!(BUTTON_GET_STATE)) {
-  		  LED_ON;
-  	  }
-  	  else
-  	  {
-  		  LED_OFF;
+	 EDGE_TYPE edge_type = edgeDetect(actual_state,samples); //read from edge detect function
+  	 if(edge_type == RISE) { //chceck rising edge - if yes, toggle LED state
+  		 actual_state = 1;
+  		 if(LED_state == 1){
+  			 LED_OFF;
+  			 LED_state = 0;
+  		 } else {
+  			LED_ON;
+  			LED_state = 1;
+  		 }
+  	  } else if(edge_type = FALL) {
+  		  actual_state = 0;
   	  }
     }
 }
@@ -130,6 +140,16 @@ void Error_Handler(void)
   /* User can add his own implementation to report the HAL error return state */
 
   /* USER CODE END Error_Handler_Debug */
+}
+
+EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples) {
+	for	(int i = 0; i < samples; i++) {
+		int8_t actual_state = BUTTON_GET_STATE;
+		if(((actual_state) && (pin_state)) || ((!actual_state) && (!pin_state))) return NONE;
+	}
+	if(pin_state) return FALL;
+	return RISE;
+
 }
 
 #ifdef  USE_FULL_ASSERT
