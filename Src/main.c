@@ -143,12 +143,32 @@ void Error_Handler(void)
 }
 
 EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples) {
-	for	(int i = 0; i < samples; i++) {
+//	for	(int i = 0; i < samples; i++) {
+//		int8_t actual_state = BUTTON_GET_STATE;
+//		if(((actual_state) && (pin_state)) || ((!actual_state) && (!pin_state))) return NONE;
+//	}
+//	if(pin_state) return FALL;
+//	return RISE;
+
+	int detection = 0;
+	while(1){
 		int8_t actual_state = BUTTON_GET_STATE;
-		if(((actual_state) && (pin_state)) || ((!actual_state) && (!pin_state))) return NONE;
+		if(actual_state == 1){
+			detection++;
+		}
+		else{
+			return NONE;
+		}
+		if(detection == samples){
+			if (pin_state == 1){
+				return FALL;
+			}
+			else{
+				return RISE;
+			}
+		}
 	}
-	if(pin_state) return FALL;
-	return RISE;
+
 
 }
 
