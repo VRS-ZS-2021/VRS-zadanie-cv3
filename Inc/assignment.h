@@ -44,7 +44,7 @@
 #define LED_ON					GPIOA_BSRR_REG |= (1 << 4)
 #define LED_OFF					GPIOA_BRR_REG |= (1 << 4)
 
-#define BUTTON_GET_STATE		GPIOA_IDR_REG & (1 << 3) 
+#define BUTTON_GET_STATE		GPIOA_IDR_REG & (1 << 3)
 
 typedef enum EDGE_TYPE{NONE,RISE,FALL} EDGE_TYPE;
 

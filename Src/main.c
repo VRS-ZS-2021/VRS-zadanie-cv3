@@ -107,15 +107,15 @@ int main(void)
   GPIOA_PUPDR_REG &= ~(uint32_t)(0x3 << 6);
   GPIOA_PUPDR_REG |= (uint32_t)(1 << 6);
 
-  int8_t actual_state = BUTTON_GET_STATE;
-  int8_t samples = 5;
-  int8_t LED_state = 0;
+  int8_t actual_state = !(BUTTON_GET_STATE); //initial button state
+  int8_t samples = 20;
+  int8_t LED_state = 0; //initial LED state
   LED_OFF;
+  EDGE_TYPE toggle_edge = RISE; //this type of edge will cause LED toggle
   while (1)
     {
 	 EDGE_TYPE edge_type = edgeDetect(actual_state,samples); //read from edge detect function
-  	 if(edge_type == RISE) { //chceck rising edge - if yes, toggle LED state
-  		 actual_state = 1;
+  	 if(edge_type == toggle_edge) { //check rising edge - if yes, toggle LED state
   		 if(LED_state == 1){
   			 LED_OFF;
   			 LED_state = 0;
@@ -123,9 +123,12 @@ int main(void)
   			LED_ON;
   			LED_state = 1;
   		 }
-  	  } else if(edge_type = FALL) {
-  		  actual_state = 0;
   	  }
+  	 if(edge_type == RISE){
+  		actual_state = 1;
+  	 } else if(edge_type == FALL) {
+  		actual_state = 0;
+  	 }
     }
 }
 
@@ -143,24 +146,17 @@ void Error_Handler(void)
 }
 
 EDGE_TYPE edgeDetect(uint8_t pin_state, uint8_t samples) {
-//	for	(int i = 0; i < samples; i++) {
-//		int8_t actual_state = BUTTON_GET_STATE;
-//		if(((actual_state) && (pin_state)) || ((!actual_state) && (!pin_state))) return NONE;
-//	}
-//	if(pin_state) return FALL;
-//	return RISE;
-
 	int detection = 0;
 	while(1){
-		int8_t actual_state = BUTTON_GET_STATE;
-		if(actual_state == 1){
+		int8_t actual_state = !(BUTTON_GET_STATE);
+		if(((!actual_state) && (pin_state)) || ((actual_state) && (!pin_state))){
 			detection++;
 		}
 		else{
 			return NONE;
 		}
 		if(detection == samples){
-			if (pin_state == 1){
+			if (pin_state){
 				return FALL;
 			}
 			else{
